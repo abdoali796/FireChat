@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Firebase test</string>
+    <string name="email">email</string>
+    <string name="userName">User Name</string>
+    <string name="authFailed">Authentication failed</string>
+    <string name="password">password</string>
+    <string name="forgetPassword">forget Password</string>
+    <string name="nikeName">nika name</string>
+    <string name="job">job</string>
+    <string name="age">age</string>
+    <string name="info">info</string>
+    <string name="update_profile">UPDATE PROFILE</string>
+    <string name="massage">Massage</string>
+    <string name="sign_in">Sign IN</string>
+    <string name="sign_up">Sign UP</string>
+    <string name="rest_password">rest password</string>
+    <string name="rest">rest</string>
+    <string name="sand_massage">Sand Massage</string>
+</resources>

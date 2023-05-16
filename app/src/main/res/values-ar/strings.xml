@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">درشه</string>
+    <string name="userName">اسم المستخدم</string>
+    <string name="authFailed">حدث خطا ما</string>
+    <string name="password">كلمه السر</string>
+    <string name="forgetPassword">نسيت كلمه السر</string>
+    <string name="nikeName">"الاسم "</string>
+    <string name="job">الوظيفه</string>
+    <string name="age">العمر</string>
+    <string name="info">معلومات</string>
+    <string name="update_profile">تحديث الملف لشخصي</string>
+    <string name="massage">رساله</string>
+    <string name="sign_in">تسجيل دخول</string>
+    <string name="sign_up">انشاء حساب</string>
+    <string name="rest_password">اعاده ضبط كلمه السر</string>
+    <string name="rest">اعاده ضبط</string>
+    <string name="email">البريد الالكتروني</string>
+    <string name="sand_massage">ارسال رساله</string>
+</resources>
