@@ -3,16 +3,11 @@ package com.abdoali.firebasetest.mainScreen
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.abdoali.firebasetest.dataLayer.Constrain
 import com.abdoali.firebasetest.dataLayer.Friends
 import com.abdoali.firebasetest.dataLayer.RepositoryChat
 import com.abdoali.firebasetest.login.TAGVM
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.getValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,49 +41,57 @@ class MainScreenVM @Inject constructor(
     }
 
  private  suspend  fun getFriends() {
-     friendsLister(true)
+     try {
+         repeat(1200) {
+             _friends.update { repositoryChat.getFriends() !! }
+         delay(2000)
+             Log.i(TAGVM , "delaydelaydelaydelay")
+         }
+         } catch (e:Exception){
+             Log.i(TAGVM , e.message.toString())
+         }
+
     }
-    private  suspend fun friendsLister(add:Boolean){
-
-        val listener=object : ValueEventListener {
-
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (!add)      {
-                    database.reference.child(Constrain.friend).child(currencyUser!!.uid)
-                        .removeEventListener(this)
-                }
-                val friendsList = mutableListOf<Friends?>()
-                snapshot.children.forEach {
-                    val friends = it.getValue<Friends>()
-
-                    friendsList.add(friends)
-                    Log.i(TAGVM , "friends${friendsList}")
-                    _friends.update { friendsList }
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-
-            }
-        }
-        if (add){
-            database.reference.child(Constrain.friend).child(currencyUser !!.uid).addValueEventListener(listener)
-
-        }
-        if (!add){
-            database.reference.child(Constrain.friend).child(currencyUser!!.uid).removeEventListener(listener)
-            database.reference.removeEventListener(listener)
-            database.reference.removeEventListener(listener)
-Log.i(TAGVM,"jjjj${database.app.removeLifecycleEventListener { firebaseAppName, options ->options.projectId  }}")
-            Log.i(TAGVM,currencyUser.email.toString())
-        }
-    }
+//    private  suspend fun friendsLister(add:Boolean){
+//
+//        val listener=object : ValueEventListener {
+//
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                if (!add)      {
+//                    database.reference.child(Constrain.friend).child(currencyUser!!.uid)
+//                        .removeEventListener(this)
+//                }
+//                val friendsList = mutableListOf<Friends?>()
+//                snapshot.children.forEach {
+//                    val friends = it.getValue<Friends>()
+//
+//                    friendsList.add(friends)
+//                    Log.i(TAGVM , "friends${friendsList}")
+//                    _friends.update { friendsList }
+//                }
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//
+//            }
+//        }
+//        if (add){
+//            database.reference.child(Constrain.friend).child(currencyUser !!.uid).addValueEventListener(listener)
+//
+//        }
+//        if (!add){
+//            database.reference.child(Constrain.friend).child(currencyUser!!.uid).removeEventListener(listener)
+//            database.reference.removeEventListener(listener)
+//            database.reference.removeEventListener(listener)
+//Log.i(TAGVM,"jjjj${database.app.removeLifecycleEventListener { firebaseAppName, options ->options.projectId  }}")
+//            Log.i(TAGVM,currencyUser.email.toString())
+//        }
+//    }
 
     fun clearChat() = repositoryChat.clearChat()
     fun singOut() {
         viewModelScope.launch {
-            friendsLister(false)
-            delay(1000)
+
             repositoryChat.singOut()
         }
 

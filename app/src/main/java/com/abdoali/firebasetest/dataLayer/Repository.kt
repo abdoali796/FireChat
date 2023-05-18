@@ -36,7 +36,7 @@ interface RepositoryChat {
     suspend fun updatePic(uri: Uri?): LoginSata
     suspend fun getList()
 //    suspend fun addFriend(uid: String): LoginSata
-    suspend fun getFriends()
+    suspend fun getFriends():MutableList<Friends?>?
     suspend fun getChatUser(uid: String): User?
     suspend fun getChatMassage(uid: String)
     suspend fun sandMassage(massage: String , uid: String)
@@ -211,9 +211,19 @@ class RepositoryChatImp @Inject constructor(
 //        }
 //    }
 
-    override suspend fun getFriends() {
+    override suspend fun getFriends():MutableList<Friends?>? {
         Log.i(TAGVM , "Userrrrrrrrrrr${getCurrentUser()?.email}")
-        friendsLister(true)
+    val friends= mutableListOf<Friends?>()
+
+
+     val dataSnapshot=  database.reference.child(Constrain.friend).child(getCurrentUser()!!.uid).get().await()
+        dataSnapshot.children.forEach {
+            val friend =it.getValue<Friends>()
+            friends.add(friend)
+            Log.i(TAGVM , "Userrrrrrrrrrr${friend}")
+        }
+
+        return friends
     }
 private fun friendsLister(add:Boolean){
 
@@ -221,14 +231,6 @@ private fun friendsLister(add:Boolean){
 
         override fun onDataChange(snapshot: DataSnapshot) {
 
-            val friendsList = mutableListOf<Friends?>()
-            snapshot.children.forEach {
-                val friends = it.getValue<Friends>()
-
-                friendsList.add(friends)
-
-                _friends.update { friendsList }
-            }
         }
 
         override fun onCancelled(error: DatabaseError) {
@@ -255,6 +257,7 @@ private fun friendsLister(add:Boolean){
     }
 
     override suspend fun getChatMassage(uid: String) {
+
         makeRoom(uid).child(Constrain.chat).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val chat = mutableListOf<Mass?>()

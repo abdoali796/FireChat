@@ -55,15 +55,6 @@ class LoginVm @Inject constructor(
         emit(login.updateProfile(user))
     }
 
-//    fun getUserList() {
-//        viewModelScope.launch {
-//
-//login.getList()
-//            login.getFriends()
-//Log.i(TAGVM,"Faa ${login.friendsList.value}")
-//        }
-//    }
-
 
 
 
