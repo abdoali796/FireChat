@@ -35,10 +35,11 @@ interface RepositoryChat {
     suspend fun getProfile(): User?
     suspend fun updatePic(uri: Uri?): LoginSata
     suspend fun getList()
-//    suspend fun addFriend(uid: String): LoginSata
-    suspend fun getFriends():MutableList<Friends?>?
+
+    //    suspend fun addFriend(uid: String): LoginSata
+    suspend fun getFriends(): MutableList<Friends?>
     suspend fun getChatUser(uid: String): User?
-    suspend fun getChatMassage(uid: String)
+    suspend fun getChatMassage(uid: String): MutableList<Mass?>
     suspend fun sandMassage(massage: String , uid: String)
     suspend fun readLastMassage(uid: String)
     fun clearChat()
@@ -65,9 +66,6 @@ class RepositoryChatImp @Inject constructor(
     private var _friends = MutableStateFlow<MutableList<Friends?>>(mutableListOf())
     override val friendsList: StateFlow<MutableList<Friends?>>
         get() = _friends
-
-
-
 
 
     override suspend fun singIn(email: String , password: String): LoginSata {
@@ -211,41 +209,22 @@ class RepositoryChatImp @Inject constructor(
 //        }
 //    }
 
-    override suspend fun getFriends():MutableList<Friends?>? {
+    override suspend fun getFriends(): MutableList<Friends?> {
         Log.i(TAGVM , "Userrrrrrrrrrr${getCurrentUser()?.email}")
-    val friends= mutableListOf<Friends?>()
+        val friends = mutableListOf<Friends?>()
 
 
-     val dataSnapshot=  database.reference.child(Constrain.friend).child(getCurrentUser()!!.uid).get().await()
-        dataSnapshot.children.forEach {
-            val friend =it.getValue<Friends>()
-            friends.add(friend)
-            Log.i(TAGVM , "Userrrrrrrrrrr${friend}")
-        }
+        database.reference.child(Constrain.friend).child(getCurrentUser() !!.uid).get()
+            .await().children.forEach {
+                val friend = it.getValue<Friends>()
+                friends.add(friend)
+            }
+
 
         return friends
     }
-private fun friendsLister(add:Boolean){
 
-    val listener=object :ValueEventListener {
 
-        override fun onDataChange(snapshot: DataSnapshot) {
-
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-
-        }
-    }
-    if (add){
-        database.reference.child(Constrain.friend).child(getCurrentUser() !!.uid).addValueEventListener(listener)
-
-    }else{
-        database.reference.child(Constrain.friend).child(getCurrentUser() !!.uid).removeEventListener(listener)
-        database.reference.removeEventListener(listener)
-
-    }
-}
     override suspend fun getChatUser(uid: String): User? {
         return database.reference.child(Constrain.user).child(uid).get().await()
             .getValue(User::class.java)
@@ -256,21 +235,26 @@ private fun friendsLister(add:Boolean){
             .get().await().getValue(Friends::class.java)
     }
 
-    override suspend fun getChatMassage(uid: String) {
-
-        makeRoom(uid).child(Constrain.chat).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val chat = mutableListOf<Mass?>()
-                snapshot.children.forEach {
-                    val mass = it.getValue(Mass::class.java)
-                    chat.add(mass)
-                    _massage.update { chat }
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-            }
-        })
+    override suspend fun getChatMassage(uid: String):MutableList<Mass?> {
+        val chat= mutableListOf<Mass?>()
+        makeRoom(uid).child(Constrain.chat).get().await().children.forEach {
+            val massage=it.getValue(Mass::class.java)
+            chat.add(massage)
+        }
+return chat
+//        makeRoom(uid).child(Constrain.chat).addValueEventListener(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                val chat = mutableListOf<Mass?>()
+//                snapshot.children.forEach {
+//                    val mass = it.getValue(Mass::class.java)
+//                    chat.add(mass)
+//                    _massage.update { chat }
+//                }
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//            }
+//        })
 
     }
 
@@ -312,11 +296,7 @@ private fun friendsLister(add:Boolean){
 
 
     override fun singOut() {
-
-friendsLister(false)
-
         firebaseAut.signOut()
-
     }
 
     private fun getCurrentUser() = firebaseAut.currentUser

@@ -6,8 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.abdoali.firebasetest.dataLayer.Friends
 import com.abdoali.firebasetest.dataLayer.RepositoryChat
 import com.abdoali.firebasetest.login.TAGVM
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainScreenVM @Inject constructor(
     private val repositoryChat: RepositoryChat,
-    private val database: FirebaseDatabase,
-    private val currencyUser:FirebaseUser?
+//    private val database: FirebaseDatabase,
+//    private val currencyUser:FirebaseUser?
 ) : ViewModel() {
 
 //    val : StateFlow<MutableList<Friends?>?>
@@ -40,10 +38,10 @@ class MainScreenVM @Inject constructor(
 
     }
 
- private  suspend  fun getFriends() {
+   suspend  fun getFriends() {
      try {
-         repeat(1200) {
-             _friends.update { repositoryChat.getFriends() !! }
+         repeat(Int.MAX_VALUE) {
+             _friends.update { repositoryChat.getFriends()  }
          delay(2000)
              Log.i(TAGVM , "delaydelaydelaydelay")
          }

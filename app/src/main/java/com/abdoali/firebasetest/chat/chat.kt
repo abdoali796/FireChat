@@ -28,6 +28,7 @@ import com.abdoali.firebasetest.R
 import com.abdoali.firebasetest.test.timeString
 import com.abdoali.firebasetest.ui.theme.ShapesMassageEnd
 import com.abdoali.firebasetest.ui.theme.ShapesMassageStart
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,9 +42,8 @@ fun Chats(
     val massageList by vm.chat.collectAsState()
     var massage by remember {
         mutableStateOf("")
-
-
     }
+
     val scope = rememberCoroutineScope()
     val listSata = rememberLazyListState()
     LaunchedEffect(key1 = massageList) {
@@ -52,7 +52,13 @@ fun Chats(
             user?.uid?.let { vm.readMassage(it) }
         }
     }
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    LaunchedEffect(key1 = true ){
+        repeat(Int.MAX_VALUE) {
+            vm.updateChat()
+            delay(1000)
+        }
+    }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -78,7 +84,9 @@ Text(text = user !!.nikeName!!)
 
 
         }) { padd ->
-        ConstraintLayout(modifier = Modifier.fillMaxSize().padding(paddingValues = padd)) {
+        ConstraintLayout(modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues = padd)) {
             val (buttom , massge) = createRefs()
 
             Column(

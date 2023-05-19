@@ -1,14 +1,17 @@
 package com.abdoali.firebasetest.chat
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.abdoali.firebasetest.dataLayer.Mass
 import com.abdoali.firebasetest.dataLayer.RepositoryChat
 import com.abdoali.firebasetest.dataLayer.User
+import com.abdoali.firebasetest.login.TAGVM
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,8 +26,9 @@ class vm @Inject constructor(
 
     var userChat = MutableStateFlow<User?>(null)
 
+    private val _chat= MutableStateFlow<MutableList<Mass?>>(mutableListOf())
     val chat: StateFlow<MutableList<Mass?>>
-        get() = repositoryChat.massage
+        get() =_chat
 
 
     init {
@@ -32,7 +36,7 @@ class vm @Inject constructor(
         val userChatUid = getUserChat(stateHandle)
         userChatUid.let {
             if (it != null) {
-                getUser(it)
+                getUserAndChat(it)
 
             }
         }
@@ -40,14 +44,18 @@ class vm @Inject constructor(
 
     }
 
-    private fun getUser(uid: String) {
+    private fun getUserAndChat(uid: String) {
         viewModelScope.launch {
-            repositoryChat.getChatMassage(uid)
+         _chat.update { repositoryChat.getChatMassage(uid) }
             userChat.emit(repositoryChat.getChatUser(uid))
 
         }
     }
 
+    suspend fun updateChat(){
+        _chat.update { repositoryChat.getChatMassage(userChat.value?.uid.toString()) }
+        Log.i(TAGVM,"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu")
+    }
 
     fun sandMassage(massage: String) {
         viewModelScope.launch {

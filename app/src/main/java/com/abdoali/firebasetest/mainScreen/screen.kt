@@ -1,7 +1,6 @@
 package com.abdoali.firebasetest.mainScreen
 
 
-import android.util.Log
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -31,7 +30,6 @@ import com.abdoali.firebasetest.R
 import com.abdoali.firebasetest.chat.navToChats
 import com.abdoali.firebasetest.dataLayer.Friends
 import com.abdoali.firebasetest.login.INFO
-import com.abdoali.firebasetest.login.TAGVM
 import com.abdoali.firebasetest.login.singOut
 import com.abdoali.firebasetest.search.navToSearch
 import com.abdoali.firebasetest.test.isScrollingUp
@@ -42,6 +40,7 @@ fun MainScreen(
 ) {
 
     val ursers by vm.listStateFlow.collectAsState()
+
 
     MainScreenImp(ursers = ursers ,
         singOutAction = {
