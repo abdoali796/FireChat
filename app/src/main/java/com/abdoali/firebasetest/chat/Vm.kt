@@ -9,6 +9,7 @@ import com.abdoali.firebasetest.dataLayer.RepositoryChat
 import com.abdoali.firebasetest.dataLayer.User
 import com.abdoali.firebasetest.login.TAGVM
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -46,16 +47,20 @@ class vm @Inject constructor(
 
     private fun getUserAndChat(uid: String) {
         viewModelScope.launch {
-         _chat.update { repositoryChat.getChatMassage(uid) }
-            userChat.emit(repositoryChat.getChatUser(uid))
 
+            userChat.emit(repositoryChat.getChatUser(uid))
+repeat(Int.MAX_VALUE) {
+    _chat.update { repositoryChat.getChatMassage(uid) }
+    Log.i(TAGVM ,"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu")
+    delay(1000)
+}
         }
     }
 
-    suspend fun updateChat(){
-        _chat.update { repositoryChat.getChatMassage(userChat.value?.uid.toString()) }
-        Log.i(TAGVM,"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu")
-    }
+//    suspend fun updateChat(){
+//        _chat.update { repositoryChat.getChatMassage(userChat.value?.uid.toString()) }
+//
+//    }
 
     fun sandMassage(massage: String) {
         viewModelScope.launch {

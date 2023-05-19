@@ -51,13 +51,13 @@ fun MainScreen(
 
         clickAction = {
 
-            vm.clearChat()
+
             navController.navToChats(it.uid !!)
         } , getUserAction = {
 
         }, searchAction ={
             navController.navToSearch()
-            vm.clearChat()
+
         } )
 }
 

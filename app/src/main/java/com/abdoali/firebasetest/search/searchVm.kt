@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,14 +26,15 @@ class SearchVm @Inject constructor(
  private val _isSearching= MutableStateFlow(false)
  val isSearching=_isSearching.asStateFlow()
 
-
+private  val _list= MutableStateFlow<MutableList<User?>?>(mutableListOf())
  private val list: StateFlow<MutableList<User?>?>
-     get() = repositoryChat.userList
+     get() = _list
 
 
  init {
 viewModelScope.launch {
-repositoryChat.getList()}
+_list.update {  repositoryChat.getList()}
+}
  }
 //    fun addFriend(uid:String){
 //        viewModelScope.launch {
@@ -46,7 +48,7 @@ repositoryChat.getList()}
 
     }
 
-    private val _userList= MutableStateFlow(list.value)
+    private val _userList= list
     val userList=searchText
         .combine(_userList){text , user->
             if (text.isBlank()){

@@ -30,7 +30,7 @@ class MainScreenVM @Inject constructor(
     init {
         viewModelScope.launch {
 //            repositoryChat.getFriends()
-            repositoryChat.getList()
+//            repositoryChat.getList()
 
                 Log.i(TAGVM , "chaxxxxxxxxxn${listStateFlow.value}")
             getFriends()
@@ -86,7 +86,7 @@ class MainScreenVM @Inject constructor(
 //        }
 //    }
 
-    fun clearChat() = repositoryChat.clearChat()
+
     fun singOut() {
         viewModelScope.launch {
 

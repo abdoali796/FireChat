@@ -28,7 +28,6 @@ import com.abdoali.firebasetest.R
 import com.abdoali.firebasetest.test.timeString
 import com.abdoali.firebasetest.ui.theme.ShapesMassageEnd
 import com.abdoali.firebasetest.ui.theme.ShapesMassageStart
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,12 +51,12 @@ fun Chats(
             user?.uid?.let { vm.readMassage(it) }
         }
     }
-    LaunchedEffect(key1 = true ){
-        repeat(Int.MAX_VALUE) {
-            vm.updateChat()
-            delay(1000)
-        }
-    }
+//    LaunchedEffect(key1 = true ){
+//        repeat(Int.MAX_VALUE) {
+//            vm.updateChat()
+//            delay(1000)
+//        }
+//    }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

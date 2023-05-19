@@ -10,16 +10,10 @@ import android.util.Log
 import com.abdoali.firebasetest.login.TAGVM
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
 import java.util.Calendar
@@ -34,7 +28,7 @@ interface RepositoryChat {
     suspend fun updateProfile(user: User): LoginSata
     suspend fun getProfile(): User?
     suspend fun updatePic(uri: Uri?): LoginSata
-    suspend fun getList()
+    suspend fun getList(): MutableList<User?>
 
     //    suspend fun addFriend(uid: String): LoginSata
     suspend fun getFriends(): MutableList<Friends?>
@@ -42,10 +36,10 @@ interface RepositoryChat {
     suspend fun getChatMassage(uid: String): MutableList<Mass?>
     suspend fun sandMassage(massage: String , uid: String)
     suspend fun readLastMassage(uid: String)
-    fun clearChat()
-    val massage: StateFlow<MutableList<Mass?>>
-    val userList: StateFlow<MutableList<User?>>
-    val friendsList: StateFlow<MutableList<Friends?>>
+//    fun clearChat()
+//    val massage: StateFlow<MutableList<Mass?>>
+//    val userList: StateFlow<MutableList<User?>?>
+//    val friendsList: StateFlow<MutableList<Friends?>>
     fun singOut()
 }
 
@@ -56,16 +50,16 @@ class RepositoryChatImp @Inject constructor(
     private val context: Context
 
 ) : RepositoryChat {
-    private var _massage = MutableStateFlow<MutableList<Mass?>>(mutableListOf())
-    override val massage: StateFlow<MutableList<Mass?>>
-        get() = _massage
-    private var _userList = MutableStateFlow<MutableList<User?>>(mutableListOf())
-    override val userList: StateFlow<MutableList<User?>>
-        get() = _userList
-
-    private var _friends = MutableStateFlow<MutableList<Friends?>>(mutableListOf())
-    override val friendsList: StateFlow<MutableList<Friends?>>
-        get() = _friends
+//    private var _massage = MutableStateFlow<MutableList<Mass?>>(mutableListOf())
+//    override val massage: StateFlow<MutableList<Mass?>>
+////        get() = _massage
+//    private var _userList = MutableStateFlow<MutableList<User?>>(mutableListOf())
+//    override val userList: StateFlow<MutableList<User?>>
+//        get() = _userList
+//
+//    private var _friends = MutableStateFlow<MutableList<Friends?>>(mutableListOf())
+//    override val friendsList: StateFlow<MutableList<Friends?>>
+//        get() = _friends
 
 
     override suspend fun singIn(email: String , password: String): LoginSata {
@@ -177,23 +171,28 @@ class RepositoryChatImp @Inject constructor(
         }
     }
 
-    override suspend fun getList() {
-
-        database.reference.child(Constrain.user).addValueEventListener(object : ValueEventListener {
-            val userList = mutableListOf<User?>()
-            override fun onDataChange(snapshot: DataSnapshot) {
-                snapshot.children.forEach {
-                    val user = it.getValue(User::class.java)
-                    userList.add(user)
-                }
-
-                _userList.update { userList }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-        })
+    override suspend fun getList(): MutableList<User?> {
+        val userList = mutableListOf<User?>()
+database.reference.child(Constrain.user).get().await().children.forEach {
+    val user = it.getValue(User::class.java)
+    userList.add(user)
+}
+//        _userList.update { userList }
+        return userList
+//        database.reference.child(Constrain.user).addValueEventListener(object : ValueEventListener {
+//
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                snapshot.children.forEach {
+//
+//                }
+//
+//                _userList.update { userList }
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                TODO("Not yet implemented")
+//            }
+//        })
 
     }
 
@@ -290,9 +289,9 @@ return chat
             .setValue(getCurrentUserProfile() !!.tofriend(massage , false)).await()
     }
 
-    override fun clearChat() {
-        _massage.value = mutableListOf()
-    }
+//    override fun clearChat() {
+//        _massage.value = mutableListOf()
+//    }
 
 
     override fun singOut() {
