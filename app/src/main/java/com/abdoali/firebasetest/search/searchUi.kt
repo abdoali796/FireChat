@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,8 +43,7 @@ fun SearchUi(
     val userListFilter by vm.userListFilter.collectAsState()
     val isSearch by vm.isSearching.collectAsState()
     val userList by vm.list.collectAsState()
-Scaffold() {
-    padding ->
+
 
 Box(modifier = Modifier
     .semantics {
@@ -54,10 +51,10 @@ Box(modifier = Modifier
     }
     .zIndex(1f)
     .fillMaxSize()
-    .padding(padding)) {
+) {
     Spacer(modifier = Modifier.background(MaterialTheme.colorScheme.background).fillMaxSize())
     LazyColumn(
-        contentPadding = PaddingValues(top = 40.dp)
+        contentPadding = PaddingValues(top = 70.dp)
     ){
         if (userList != null) {
             items(userList !!) { user ->
@@ -97,7 +94,7 @@ Box(modifier = Modifier
             }
         }
     }
-}}}
+}}
 //    Box(Modifier.fillMaxSize().padding(paddingValues = padding)) {
 //        TextField(
 //            value = searchText ,
