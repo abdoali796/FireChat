@@ -47,27 +47,27 @@ fun Chats(
     val listSata = rememberLazyListState()
     LaunchedEffect(key1 = massageList) {
         scope.launch {
-            if (massageList.size > 1) listSata.animateScrollToItem(index = massageList.size - 1)
+            if (massageList.size > 1) listSata.animateScrollToItem(index = 0)
             user?.uid?.let { vm.readMassage(it) }
+
         }
     }
-//    LaunchedEffect(key1 = true ){
-//        repeat(Int.MAX_VALUE) {
-//            vm.updateChat()
-//            delay(1000)
-//        }
-//    }
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             if (user != null) {
 
 
-LargeTopAppBar(
+TopAppBar(
 
     title = {
-Text(text = user !!.nikeName!!)
+        Column() {
+            Text(text = user !!.nikeName!!, style = MaterialTheme.typography.titleLarge)
+            user !!.job?.let { Text(text = it, style = MaterialTheme.typography.titleSmall) }
+        }
+
     },actions={
         AsyncImage(
             model = user?.picture ,
@@ -78,7 +78,8 @@ Text(text = user !!.nikeName!!)
         )
     },
     scrollBehavior = scrollBehavior
-)}
+)
+            }
         } , bottomBar = {
 
 
@@ -100,6 +101,8 @@ Text(text = user !!.nikeName!!)
                 LazyColumn(
                     state = listSata ,
                     contentPadding = padd ,
+                    reverseLayout = true,
+                    verticalArrangement = Arrangement.Bottom
                 ) {
                     item {
                         Spacer(modifier = Modifier.height(30.dp))
@@ -214,15 +217,17 @@ fun MassageEdit(
         Button(
             onClick = action ,
             enabled = text.value != "" ,
-            shape = MaterialTheme.shapes.large ,
+            shape = MaterialTheme.shapes.medium ,
             modifier = Modifier
                 .weight(0.2f)
-                .padding(4.dp)
+                .padding(4.dp, bottom = 8.dp)
+                .height(TextFieldDefaults.MinHeight)
+
 //                .clip(CircleShape)
 //                .clipToBounds()
         ) {
             Icon(
-                Icons.Default.Send ,
+                Icons.Filled.Send,
                 contentDescription = null
             )
         }

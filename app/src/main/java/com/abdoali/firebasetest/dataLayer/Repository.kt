@@ -240,6 +240,7 @@ database.reference.child(Constrain.user).get().await().children.forEach {
             val massage=it.getValue(Mass::class.java)
             chat.add(massage)
         }
+        chat.reverse()
 return chat
 //        makeRoom(uid).child(Constrain.chat).addValueEventListener(object : ValueEventListener {
 //            override fun onDataChange(snapshot: DataSnapshot) {

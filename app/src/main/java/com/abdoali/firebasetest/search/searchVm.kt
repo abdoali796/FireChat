@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.abdoali.firebasetest.dataLayer.RepositoryChat
 import com.abdoali.firebasetest.dataLayer.User
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,22 +21,23 @@ class SearchVm @Inject constructor(
     private val repositoryChat: RepositoryChat
 ) : ViewModel() {
 
- private val _searchText= MutableStateFlow("")
- val searchText=_searchText.asStateFlow()
+    private val _searchText = MutableStateFlow("")
+    val searchText = _searchText.asStateFlow()
 
- private val _isSearching= MutableStateFlow(false)
- val isSearching=_isSearching.asStateFlow()
+    private val _isSearching = MutableStateFlow(false)
+    val isSearching = _isSearching.asStateFlow()
 
-private  val _list= MutableStateFlow<MutableList<User?>?>(mutableListOf())
- private val list: StateFlow<MutableList<User?>?>
-     get() = _list
+    private val _list = MutableStateFlow<MutableList<User?>?>(mutableListOf())
+    val list: StateFlow<MutableList<User?>?>
+        get() = _list
 
 
- init {
-viewModelScope.launch {
-_list.update {  repositoryChat.getList()}
-}
- }
+    init {
+        viewModelScope.launch {
+            delay(4000)
+            _list.update { repositoryChat.getList() }
+        }
+    }
 //    fun addFriend(uid:String){
 //        viewModelScope.launch {
 //            repositoryChat.addFriend(uid)
@@ -43,43 +45,42 @@ _list.update {  repositoryChat.getList()}
 //
 //    }
 
-    fun onSearchTextChange(text:String){
-        _searchText.value=text
+    fun onSearchTextChange(text: String) {
+        _searchText.value = text
 
     }
 
-    private val _userList= list
-    val userList=searchText
-        .combine(_userList){text , user->
-            if (text.isBlank()){
+    fun onSearch(boolean: Boolean) {
+        _isSearching.value = boolean
+    }
+
+    private val _userList = list
+    val userListFilter = searchText
+        .combine(_userList) { text , user ->
+            if (text.isBlank()) {
                 user
-            }else{
+            } else {
                 user?.filter {
-                    it!!.query(text)
+                    it !!.query(text)
                 }
             }
 
         }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(59999),
+            viewModelScope ,
+            SharingStarted.WhileSubscribed(59999) ,
             _userList.value
         )
 
 }
 
 
-fun User.query(query:String):Boolean{
-    val matching= listOf(
-        userName,nikeName,job,email
+fun User.query(query: String): Boolean {
+    val matching = listOf(
+        userName , nikeName , job , email
     )
     return matching.any {
-        it!!.contains(query,ignoreCase = true)
+        it !!.contains(query , ignoreCase = true)
     }
-
-
-
-
-
 
 
 }

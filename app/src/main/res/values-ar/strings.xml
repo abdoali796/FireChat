@@ -17,4 +17,5 @@
     <string name="rest">اعاده ضبط</string>
     <string name="email">البريد الالكتروني</string>
     <string name="sand_massage">ارسال رساله</string>
+    <string name="search">ابحث بالاسم او البريد الاكتروني او اسم او اي شى</string>
 </resources>

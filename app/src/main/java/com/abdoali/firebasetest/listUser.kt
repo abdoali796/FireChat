@@ -37,7 +37,8 @@ fun FriendItem(
 
 ) {
     Card(onClick = clickAction , modifier = Modifier.fillMaxWidth()) {
-        val rtfArrangement=if (friends.readLastMass) Arrangement.Start else Arrangement.SpaceBetween
+        val rtfArrangement =
+            if (friends.readLastMass) Arrangement.Start else Arrangement.SpaceBetween
         Row(
             verticalAlignment = Alignment.CenterVertically ,
             horizontalArrangement = rtfArrangement ,
@@ -70,7 +71,7 @@ fun FriendItem(
                     }
                 }
             }
-            if (!friends.readLastMass) {
+            if (! friends.readLastMass) {
                 Icon(
                     Icons.Default.NewReleases ,
                     "new Massage" ,
@@ -95,7 +96,7 @@ fun UserItem(
     Card(
         onClick = clickAction , modifier = Modifier
             .fillMaxWidth()
-            .padding(3.dp)
+
     ) {
 
 
@@ -136,14 +137,33 @@ fun UserCard(
     Card(
         shape = MaterialTheme.shapes.medium ,
         modifier = Modifier
-            .padding(3.dp)
+            .padding(vertical = 2.dp, horizontal = 8.dp)
             .fillMaxWidth()
             .clickable(onClick = clickAction)
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.Start
+, modifier = Modifier.padding( horizontal = 8.dp)
         ) {
-            Row() {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+
+
+            ) {
+                Column() {
+                    user.nikeName?.let {
+                        Text(
+                            text = it , style = MaterialTheme.typography.headlineSmall
+                        )
+                    }
+                    user.job?.let {
+                        Text(
+                            text = it , style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+                }
+
                 AsyncImage(
                     model = user.picture ,
                     contentDescription = null ,
@@ -156,22 +176,10 @@ fun UserCard(
                     placeholder = painterResource(com.airbnb.lottie.R.drawable.abc_ic_search_api_material)
 
                 )
-                Column() {
-                    user.nikeName?.let {
-                        Text(
-                            text = it , style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                    user.job?.let {
-                        Text(
-                            text = it , style = MaterialTheme.typography.headlineLarge
-                        )
-                    }
-                }
             }
-            user.email?.let { Text(text = it , style = MaterialTheme.typography.bodyMedium) }
-            user.age?.let { Text(text = "Age: $it" , style = MaterialTheme.typography.bodySmall) }
-            user.info?.let { Text(text = it , style = MaterialTheme.typography.displaySmall) }
+            user.email?.let { Text(text = it , style = MaterialTheme.typography.titleSmall) }
+            user.age?.let { Text(text = "Age: $it" , style = MaterialTheme.typography.titleSmall) }
+            user.info?.let { Text(text = it , style = MaterialTheme.typography.labelLarge) }
         }
 
     }
@@ -197,7 +205,7 @@ fun UserPx() {
         user = User(
             nikeName = "abdo ali" ,
             job = "killer" ,
-            info = "More info" ,
+            info = "Morecccccccccccccccccccccccccccccccccccc info" ,
             age = 29 ,
             email = "aass@ssk.sdk"
         )
@@ -228,12 +236,12 @@ fun FriendsPrei() {
     val f = Friends(
         nikeName = "abdo ali" ,
         job = "killer" ,
-        info = "More info" ,
+        info = "Moreddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd info" ,
         age = 29 ,
         email = "aass@ssk.sdk" ,
-        lastMass = "hi wokcgf",
+        lastMass = "hi wokcgf" ,
         readLastMass = true
     )
-    FriendItem(friends = f , clickAction = { /*TODO*/ } )
-    FriendItem(friends = f , clickAction = { /*TODO*/ } )
+    FriendItem(friends = f , clickAction = { /*TODO*/ })
+    FriendItem(friends = f , clickAction = { /*TODO*/ })
 }
