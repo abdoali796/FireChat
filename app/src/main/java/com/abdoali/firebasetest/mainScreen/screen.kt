@@ -1,6 +1,8 @@
 package com.abdoali.firebasetest.mainScreen
 
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -16,10 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
@@ -32,6 +31,7 @@ import com.abdoali.firebasetest.dataLayer.Friends
 import com.abdoali.firebasetest.login.INFO
 import com.abdoali.firebasetest.login.singOut
 import com.abdoali.firebasetest.search.navToSearch
+import com.abdoali.firebasetest.temp.LoadingAnimation
 import com.abdoali.firebasetest.test.isScrollingUp
 
 @Composable
@@ -75,6 +75,12 @@ fun MainScreenImp(
     ) {
 
     val listState = rememberLazyListState()
+    var isLoading by remember {
+        mutableStateOf(true)
+    }
+    LaunchedEffect(key1 = true , key2 = ursers ){
+        isLoading = ursers!!.isEmpty()
+    }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection) ,
         floatingActionButton = {
@@ -107,16 +113,19 @@ fun MainScreenImp(
 
         floatingActionButtonPosition = FabPosition.End) {
 
-
+AnimatedVisibility(visible = isLoading) {
+    LoadingAnimation()
+}
         LazyColumn(
-            state = listState , contentPadding = it
+            state = listState , contentPadding = it , modifier = Modifier.animateContentSize()
         ) {
+
             if (ursers != null) {
                 items(ursers) { firand ->
 
-                    if (firand != null) {
-                        FriendItem(firand , clickAction = { clickAction(firand) })
-                    }
+
+                        FriendItem(firand !!, clickAction = { clickAction(firand) })
+
                 }
             }
         }

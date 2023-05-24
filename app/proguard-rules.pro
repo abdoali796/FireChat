@@ -19,3 +19,25 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+# Please add these rules to your existing keep rules in order to suppress warnings.
+# This is generated automatically by the Android Gradle plugin.
+-keep public class com.google.firebase.** {*;}
+-keep class com.google.android.gms.internal.** {*;}
+-keepclasseswithmembers class com.google.firebase.FirebaseException
+-dontwarn com.android.org.conscrypt.SSLParametersImpl
+-dontwarn org.bouncycastle.jsse.BCSSLParameters
+-dontwarn org.bouncycastle.jsse.BCSSLSocket
+-dontwarn org.bouncycastle.jsse.provider.BouncyCastleJsseProvider
+-dontwarn org.openjsse.javax.net.ssl.SSLParameters
+-dontwarn org.openjsse.javax.net.ssl.SSLSocket
+-dontwarn org.openjsse.net.ssl.OpenJSSE
+
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontpreverify
+-verbose
+
+-optimizations !code/simplification/arithmetic,!code/allocation/variable
+-keep class **
+-keepclassmembers class *{*;}
+-keepattributes *

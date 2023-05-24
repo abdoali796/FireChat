@@ -2,6 +2,7 @@
 
 package com.abdoali.firebasetest.login
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -36,8 +37,8 @@ import androidx.navigation.NavController
 import com.abdoali.firebasetest.R
 import com.abdoali.firebasetest.dataLayer.LoginSata
 import com.abdoali.firebasetest.mainScreen.popupToMain
+import com.abdoali.firebasetest.temp.ApplyChangeDialog
 import com.abdoali.firebasetest.temp.ErrorDialog
-import com.abdoali.firebasetest.temp.Loading
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,9 +62,7 @@ fun Login(
     }
     Scaffold(
 
-    ) {
-        padding->
-
+    ) { padding ->
 
 
         Column(
@@ -100,8 +99,8 @@ fun Login(
                         alwaysShowLabel = false)
                 }
             }
-            if (landing) {
-                Loading(isLoading = { landing = it })
+            AnimatedVisibility (landing) {
+                ApplyChangeDialog(isLoading = { landing = it })
             }
 
 

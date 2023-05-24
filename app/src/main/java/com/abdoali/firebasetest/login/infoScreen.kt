@@ -2,6 +2,7 @@ package com.abdoali.firebasetest
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,8 +37,9 @@ import coil.compose.AsyncImage
 import com.abdoali.firebasetest.dataLayer.LoginSata
 import com.abdoali.firebasetest.dataLayer.User
 import com.abdoali.firebasetest.login.LoginVm
+import com.abdoali.firebasetest.login.TAGVM
 import com.abdoali.firebasetest.mainScreen.popupToMain
-import com.abdoali.firebasetest.temp.Loading
+import com.abdoali.firebasetest.temp.LoadingAnimationDialog
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class , ExperimentalMaterial3Api::class)
@@ -47,9 +49,7 @@ fun Info(
     navController: NavController ,
     vm: LoginVm = hiltViewModel()
 ) {
-    val user by remember {
-        mutableStateOf(User(""))
-    }
+    val user by vm.user.collectAsState()
     var email by remember {
         mutableStateOf("")
     }
@@ -79,31 +79,31 @@ fun Info(
     val scrollableState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
     var uri by remember {
-        mutableStateOf<Uri?>(user.picture?.toUri())
+        mutableStateOf<Uri?>(user?.picture?.toUri())
     }
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
             uri = it
         }
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(key1 = true , key2 = user) {
 
-        vm.getUserInfo().collect {
-            if (it.uid == "") {
+        vm.getUserInfo()
+            if (user == User()) {
                 isLoading = true
             } else {
-
+Log.i(TAGVM,"kkkklllllllllllllllllllll"+user?.email.toString())
                 isLoading = false
-                uri = it.picture?.toUri()
-                userName = it.userName.toString()
-                email = it.email.toString()
-                info = it.info.toString()
-                nikaName = it.nikeName.toString()
-                age = it.age.toString()
-                job = it.job.toString()
+                uri = user?.picture?.toUri()
+                userName = user?.userName.toString()
+                email = user?.email.toString()
+                info = user?.info.toString()
+                nikaName = user?.nikeName.toString()
+                age = user?.age.toString()
+                job = user?.job.toString()
             }
         }
 
-    }
+
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(text = stringResource(R.string.update_profile))}
@@ -120,7 +120,7 @@ fun Info(
 
 
         if (isLoading) {
-            Loading(isLoading = { isLoading = it })
+            LoadingAnimationDialog(isLoading = { isLoading = it })
         }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally ,
@@ -275,7 +275,7 @@ fun Info(
 
                 }
             }) {
-                Text(text = "upData")
+                Text(text = stringResource(R.string.update))
             }
 
 

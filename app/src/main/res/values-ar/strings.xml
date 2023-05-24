@@ -18,4 +18,5 @@
     <string name="email">البريد الالكتروني</string>
     <string name="sand_massage">ارسال رساله</string>
     <string name="search">ابحث بالاسم او البريد الاكتروني او اسم او اي شى</string>
+    <string name="update">update</string>
 </resources>

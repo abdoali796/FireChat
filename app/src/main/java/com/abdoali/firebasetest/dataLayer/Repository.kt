@@ -36,7 +36,8 @@ interface RepositoryChat {
     suspend fun getChatMassage(uid: String): MutableList<Mass?>
     suspend fun sandMassage(massage: String , uid: String)
     suspend fun readLastMassage(uid: String)
-//    fun clearChat()
+
+    //    fun clearChat()
 //    val massage: StateFlow<MutableList<Mass?>>
 //    val userList: StateFlow<MutableList<User?>?>
 //    val friendsList: StateFlow<MutableList<Friends?>>
@@ -83,20 +84,23 @@ class RepositoryChatImp @Inject constructor(
 
             })?.await()
 
-            database.reference.child(Constrain.user).child(firebaseAut.currentUser !!.uid)
-                .setValue(
+            database.reference.child(Constrain.user).child(firebaseAut.currentUser !!.uid).setValue(
                     User(
                         uid = getCurrentUser() !!.uid ,
                         userName = getCurrentUser() !!.displayName ,
 //                        email = getCurrentUser() !!.email
                     )
                 )
-
+            upDateLastMess(getAdminId() !! , "support")
             LoginSata.Succeed
         } catch (e: Exception) {
             LoginSata.Error(e.message.toString())
         }
 
+    }
+
+    private suspend fun getAdminId(): String? {
+        return database.reference.child("admin").get().await().getValue<String>()
     }
 
     override suspend fun reSetPassWord(email: String): LoginSata {
@@ -173,10 +177,10 @@ class RepositoryChatImp @Inject constructor(
 
     override suspend fun getList(): MutableList<User?> {
         val userList = mutableListOf<User?>()
-database.reference.child(Constrain.user).get().await().children.forEach {
-    val user = it.getValue(User::class.java)
-    userList.add(user)
-}
+        database.reference.child(Constrain.user).get().await().children.forEach {
+            val user = it.getValue(User::class.java)
+            userList.add(user)
+        }
 //        _userList.update { userList }
         return userList
 //        database.reference.child(Constrain.user).addValueEventListener(object : ValueEventListener {
@@ -234,14 +238,14 @@ database.reference.child(Constrain.user).get().await().children.forEach {
             .get().await().getValue(Friends::class.java)
     }
 
-    override suspend fun getChatMassage(uid: String):MutableList<Mass?> {
-        val chat= mutableListOf<Mass?>()
+    override suspend fun getChatMassage(uid: String): MutableList<Mass?> {
+        val chat = mutableListOf<Mass?>()
         makeRoom(uid).child(Constrain.chat).get().await().children.forEach {
-            val massage=it.getValue(Mass::class.java)
+            val massage = it.getValue(Mass::class.java)
             chat.add(massage)
         }
         chat.reverse()
-return chat
+        return chat
 //        makeRoom(uid).child(Constrain.chat).addValueEventListener(object : ValueEventListener {
 //            override fun onDataChange(snapshot: DataSnapshot) {
 //                val chat = mutableListOf<Mass?>()
@@ -267,7 +271,7 @@ return chat
         room.child(Constrain.chat).child(key !!)
             .setValue(Mass(getCurrentUser() !!.uid , timeMillis , massage)).await()
 //        room.child(Constrain.lastMass).setValue(massage)
-        upDataLastMass(uid = uid , massage = massage)
+        upDateLastMess(uid = uid , massage = massage)
     }
 
     override suspend fun readLastMassage(uid: String) {
@@ -282,7 +286,7 @@ return chat
 
     }
 
-    private suspend fun upDataLastMass(uid: String , massage: String) {
+    private suspend fun upDateLastMess(uid: String , massage: String) {
         val friend = getChatUser(uid) !!.tofriend(massage , true)
         database.reference.child(Constrain.friend).child(getCurrentUser() !!.uid).child(uid)
             .setValue(friend).await()
@@ -314,6 +318,7 @@ return chat
     }
 
 
+    @Suppress("DEPRECATION")
     private fun compressImage(uri: Uri): Uri? {
         try {
 

@@ -1,6 +1,7 @@
 package com.abdoali.firebasetest.chat
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,38 +57,49 @@ fun Chats(
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
-modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection) ,
         topBar = {
             if (user != null) {
 
 
-TopAppBar(
+                TopAppBar(
 
-    title = {
-        Column() {
-            Text(text = user !!.nikeName!!, style = MaterialTheme.typography.titleLarge)
-            user !!.job?.let { Text(text = it, style = MaterialTheme.typography.titleSmall) }
-        }
+                    title = {
+                        Column() {
+                            Text(
+                                text = user !!.nikeName !! ,
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            user !!.job?.let {
+                                Text(
+                                    text = it ,
+                                    style = MaterialTheme.typography.titleSmall
+                                )
+                            }
+                        }
 
-    },actions={
-        AsyncImage(
-            model = user?.picture ,
-            contentDescription = user?.nikeName ,
-            Modifier
-                .size(45.dp)
-                .clip(CircleShape)
-        )
-    },
-    scrollBehavior = scrollBehavior
-)
+                    } , actions = {
+                        AsyncImage(
+                            model = user?.picture ,
+                            contentDescription = user?.nikeName ,
+                            contentScale = ContentScale.FillBounds ,
+                            modifier = Modifier
+                                .size(45.dp)
+                                .clip(CircleShape)
+                        )
+                    } ,
+                    scrollBehavior = scrollBehavior
+                )
             }
         } , bottomBar = {
 
 
         }) { padd ->
-        ConstraintLayout(modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues = padd)) {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues = padd)
+        ) {
             val (buttom , massge) = createRefs()
 
             Column(
@@ -101,12 +114,13 @@ TopAppBar(
                 LazyColumn(
                     state = listSata ,
                     contentPadding = padd ,
-                    reverseLayout = true,
-                    verticalArrangement = Arrangement.Bottom
+                    reverseLayout = true ,
+                    verticalArrangement = Arrangement.Bottom ,
+                    modifier = Modifier.animateContentSize()
                 ) {
-                    item {
-                        Spacer(modifier = Modifier.height(30.dp))
-                    }
+//                    item {
+//                        Spacer(modifier = Modifier.height(30.dp))
+//                    }
                     items(items = massageList , key = { massge ->
                         massge !!.time
                     }) { md ->
@@ -114,7 +128,7 @@ TopAppBar(
                             owner = md?.uid != user?.uid ,
                             time = md !!.time ,
                             massageText = md.text ,
-                            modifier = Modifier.animateContentSize()
+                            modifier = Modifier.animateContentSize(animationSpec = tween())
                         )
 
 
@@ -154,7 +168,8 @@ TopAppBar(
 fun MassageFide(
     time: Long , massageText: String , owner: Boolean , modifier: Modifier = Modifier
 ) {
-    val colorOwner = if (owner) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.onPrimaryContainer
+    val colorOwner =
+        if (owner) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.onPrimaryContainer
     val alignment = if (owner) Alignment.Start else Alignment.End
     val textAlign = if (owner) TextAlign.Start else TextAlign.End
     val shapes = if (owner) ShapesMassageStart else ShapesMassageEnd
@@ -220,14 +235,14 @@ fun MassageEdit(
             shape = MaterialTheme.shapes.medium ,
             modifier = Modifier
                 .weight(0.2f)
-                .padding(4.dp, bottom = 8.dp)
+                .padding(4.dp , bottom = 8.dp)
                 .height(TextFieldDefaults.MinHeight)
 
 //                .clip(CircleShape)
 //                .clipToBounds()
         ) {
             Icon(
-                Icons.Filled.Send,
+                Icons.Filled.Send ,
                 contentDescription = null
             )
         }

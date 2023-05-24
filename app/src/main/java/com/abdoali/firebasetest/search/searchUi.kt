@@ -1,5 +1,6 @@
 package com.abdoali.firebasetest.search
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -54,10 +55,11 @@ Box(modifier = Modifier
 ) {
     Spacer(modifier = Modifier.background(MaterialTheme.colorScheme.background).fillMaxSize())
     LazyColumn(
-        contentPadding = PaddingValues(top = 70.dp)
+        contentPadding = PaddingValues(top = 70.dp),
+        modifier = Modifier.animateContentSize()
     ){
         if (userList != null) {
-            items(userList !!) { user ->
+            items(userList !!, key = {user -> user?.uid!!}) { user ->
                 if (user != null) {
                     UserItem(user = user) {
 //                     vm.addFriend(user.uid!!)
