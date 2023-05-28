@@ -8,6 +8,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @dagger.Module
@@ -33,6 +35,16 @@ object Module {
     @Singleton
     fun firebaseDatabase() = FirebaseDatabase.getInstance()
 
+    @Provides
+    @Singleton
+    fun retrofit(): NotificationApi {
+        val retrofit = Retrofit.Builder()
+            .baseUrl(ConstrinFCM.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        return retrofit.create(NotificationApi::class.java)
+    }
 
     @Provides
     @Singleton
@@ -40,9 +52,10 @@ object Module {
         firebaseAuth: FirebaseAuth ,
         storage: FirebaseStorage ,
         database: FirebaseDatabase ,
+        api: NotificationApi ,
         @ApplicationContext context: Context
     ):
-            RepositoryChat = RepositoryChatImp(firebaseAuth , database , storage , context)
+            RepositoryChat = RepositoryChatImp(firebaseAuth , database , storage , api , context)
 
 
 }

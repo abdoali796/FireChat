@@ -13,6 +13,7 @@ data class User(
     var age: Int? = 0 ,
     var email: String? = "" ,
     var info: String? = "" ,
+    var deviceToken:String?=""
 
     ) {
     fun tofriend(mass: String , read: Boolean): Friends {

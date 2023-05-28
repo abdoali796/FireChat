@@ -64,7 +64,15 @@ repeat(Int.MAX_VALUE) {
 
     fun sandMassage(massage: String) {
         viewModelScope.launch {
-            repositoryChat.sandMassage(massage , userChat.value?.uid.toString())
+
+
+            try {
+                repositoryChat.sandMassage(massage , userChat.value!! )
+
+
+            }catch (e:Exception){
+Log.i(TAGVM,e.message.toString())
+            }
         }
     }
 

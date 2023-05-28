@@ -7,12 +7,15 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
+import com.abdoali.firebasetest.TAG_Token
 import com.abdoali.firebasetest.login.TAGVM
+import com.abdoali.firebasetest.mySharedPreferences
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.getValue
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
@@ -34,23 +37,25 @@ interface RepositoryChat {
     suspend fun getFriends(): MutableList<Friends?>
     suspend fun getChatUser(uid: String): User?
     suspend fun getChatMassage(uid: String): MutableList<Mass?>
-    suspend fun sandMassage(massage: String , uid: String)
+    suspend fun sandMassage(massage: String , user: User)
     suspend fun readLastMassage(uid: String)
 
     //    fun clearChat()
 //    val massage: StateFlow<MutableList<Mass?>>
 //    val userList: StateFlow<MutableList<User?>?>
 //    val friendsList: StateFlow<MutableList<Friends?>>
-    fun singOut()
+    suspend fun singOut()
 }
 
 class RepositoryChatImp @Inject constructor(
     private val firebaseAut: FirebaseAuth ,
     private val database: FirebaseDatabase ,
     private val storage: FirebaseStorage ,
+    private val notificationApi: NotificationApi ,
     private val context: Context
 
 ) : RepositoryChat {
+
 //    private var _massage = MutableStateFlow<MutableList<Mass?>>(mutableListOf())
 //    override val massage: StateFlow<MutableList<Mass?>>
 ////        get() = _massage
@@ -66,6 +71,7 @@ class RepositoryChatImp @Inject constructor(
     override suspend fun singIn(email: String , password: String): LoginSata {
         return try {
             firebaseAut.signInWithEmailAndPassword(email.trim() , password.trim()).await()
+            addToken(true)
             LoginSata.Succeed
 
         } catch (e: Exception) {
@@ -85,13 +91,14 @@ class RepositoryChatImp @Inject constructor(
             })?.await()
 
             database.reference.child(Constrain.user).child(firebaseAut.currentUser !!.uid).setValue(
-                    User(
-                        uid = getCurrentUser() !!.uid ,
-                        userName = getCurrentUser() !!.displayName ,
+                User(
+                    uid = getCurrentUser() !!.uid ,
+                    userName = getCurrentUser() !!.displayName ,
 //                        email = getCurrentUser() !!.email
-                    )
                 )
+            )
             upDateLastMess(getAdminId() !! , "support")
+            addToken(true)
             LoginSata.Succeed
         } catch (e: Exception) {
             LoginSata.Error(e.message.toString())
@@ -105,7 +112,7 @@ class RepositoryChatImp @Inject constructor(
 
     override suspend fun reSetPassWord(email: String): LoginSata {
         return try {
-            firebaseAut.sendPasswordResetEmail(email).await()
+            firebaseAut.sendPasswordResetEmail(email.trim()).await()
             LoginSata.Succeed
         } catch (e: Exception) {
             LoginSata.Error(e.message.toString())
@@ -126,8 +133,9 @@ class RepositoryChatImp @Inject constructor(
                     job = user.job ,
                     nikeName = user.nikeName ,
                     age = user.age ,
+                    deviceToken = user.deviceToken
 
-                    )
+                )
             ).await()
             LoginSata.Succeed
         } catch (e: Exception) {
@@ -164,8 +172,9 @@ class RepositoryChatImp @Inject constructor(
                     job = user.job ,
                     nikeName = user.nikeName ,
                     age = user.age ,
+                    deviceToken = user.deviceToken
 
-                    )
+                )
             ).await()
 
 
@@ -263,15 +272,25 @@ class RepositoryChatImp @Inject constructor(
     }
 
 
-    override suspend fun sandMassage(massage: String , uid: String) {
-        val room = makeRoom(uid)
+    override suspend fun sandMassage(massage: String , user: User) {
+        val room = makeRoom(user.uid !!)
         val key = room.push().key
         val timeMillis = Calendar.getInstance().timeInMillis
 
         room.child(Constrain.chat).child(key !!)
             .setValue(Mass(getCurrentUser() !!.uid , timeMillis , massage)).await()
 //        room.child(Constrain.lastMass).setValue(massage)
-        upDateLastMess(uid = uid , massage = massage)
+
+        upDateLastMess(uid = user.uid !! , massage = massage)
+        val pushNotification = PushNotification(
+            NotificationData(
+                getCurrentUserProfile()?.nikeName.toString() ,
+                massage
+            ) , to = user.deviceToken.toString()
+        )
+        pushNotification(pushNotification)
+
+
     }
 
     override suspend fun readLastMassage(uid: String) {
@@ -299,7 +318,8 @@ class RepositoryChatImp @Inject constructor(
 //    }
 
 
-    override fun singOut() {
+    override suspend fun singOut() {
+        addToken(false)
         firebaseAut.signOut()
     }
 
@@ -317,6 +337,50 @@ class RepositoryChatImp @Inject constructor(
         return database.reference.child(Constrain.room).child(roomId)
     }
 
+    private suspend fun addToken(add: Boolean) {
+
+        val token = if (add) mySharedPreferences.token else null
+        FirebaseMessaging.getInstance().subscribeToTopic("/topics/abdo").await()
+        val user = getCurrentUserProfile()
+        val databaseReference =
+            database.reference.child(Constrain.user).child(getCurrentUser() !!.uid)
+        try {
+            databaseReference.setValue(
+                User(
+                    uid = user !!.uid ,
+                    userName = user.userName ,
+                    email = user.email ,
+                    picture = user.picture ,
+                    info = user.info ,
+                    job = user.job ,
+                    nikeName = user.nikeName ,
+                    age = user.age ,
+                    deviceToken = token
+
+                )
+            ).await()
+
+        } catch (e: Exception) {
+            Log.i(TAG_Token , "addToken" + e.message.toString())
+        }
+    }
+
+    private suspend fun pushNotification(notificationData: PushNotification) {
+        try {
+            Log.i(TAG_Token , "$notificationData  {notificationData}")
+            val response = notificationApi.postNotification(notificationData)
+
+            if (response.isSuccessful) {
+                Log.i(TAG_Token , "isSuccessful${response.raw().code}${response.raw().message}")
+
+            } else {
+Log.i(TAG_Token,"filed ${response.errorBody().toString()}")
+            }
+
+        } catch (e: Exception) {
+            Log.i(TAG_Token , "Exception" + e.message.toString())
+        }
+    }
 
     @Suppress("DEPRECATION")
     private fun compressImage(uri: Uri): Uri? {

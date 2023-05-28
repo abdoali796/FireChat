@@ -2,6 +2,7 @@ package com.abdoali.firebasetest
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -20,6 +21,7 @@ import com.abdoali.firebasetest.ui.theme.FirebaseTestTheme
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -43,6 +45,13 @@ class MainActivity : ComponentActivity() {
         mySharedPreferences.initShared(applicationContext)
         val firebaseUser = firebaseAuth.currentUser
 
+Log.i(TAG_Token,mySharedPreferences.token.toString())
+FirebaseMessaging.getInstance().subscribeToTopic(mySharedPreferences.token!!).addOnCompleteListener {
+    if (it.isSuccessful){
+        Log.i(TAG_Token,"FirebaseMessaging.getInstance().subscribeToTopic(\"abdo1\").")
+    }
+}
+//        firebaseMessaging.subscribeToTopic("${ConstrinFCM.TOPIC}${firebaseMessaging.token.result}")
         setContent {
 
             FirebaseTestTheme {

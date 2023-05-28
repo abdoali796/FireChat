@@ -75,7 +75,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:32.0.0')
 
     implementation 'com.google.firebase:firebase-database-ktx'
-
+implementation("com.google.firebase:firebase-messaging-ktx:23.1.2")
     implementation 'com.google.firebase:firebase-storage-ktx'
 
     implementation 'com.google.firebase:firebase-auth-ktx'
@@ -95,4 +95,9 @@ dependencies {
     //constraint
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
     implementation 'org.conscrypt:conscrypt-android:2.2.1'
+
+    //retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.6.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
+
 }
