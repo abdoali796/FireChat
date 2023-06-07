@@ -1,8 +1,9 @@
 package com.abdoali.firebasetest
 
 import android.annotation.SuppressLint
+import android.app.NotificationManager
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.abdoali.firebasetest.chat.chats
 import com.abdoali.firebasetest.login.LOGIN_SCREEN
 import com.abdoali.firebasetest.login.info
@@ -21,7 +23,6 @@ import com.abdoali.firebasetest.ui.theme.FirebaseTestTheme
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -41,16 +42,21 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
 //        WindowCompat.setDecorFitsSystemWindows(window,false)
         mySharedPreferences.initShared(applicationContext)
         val firebaseUser = firebaseAuth.currentUser
-
-Log.i(TAG_Token,mySharedPreferences.token.toString())
-FirebaseMessaging.getInstance().subscribeToTopic(mySharedPreferences.token!!).addOnCompleteListener {
-    if (it.isSuccessful){
-        Log.i(TAG_Token,"FirebaseMessaging.getInstance().subscribeToTopic(\"abdo1\").")
-    }
-}
+        installSplashScreen()
+        val notification = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notification.cancelAll()
+//
+//Log.i(TAG_Token,mySharedPreferences.token.toString())
+//FirebaseMessaging.getInstance().subscribeToTopic(mySharedPreferences.token!!).addOnCompleteListener {
+//    if (it.isSuccessful){
+//        Log.i(TAG_Token,"FirebaseMessaging.getInstance().subscribeToTopic(zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\"abdo1\").")
+//    }
+//}
 //        firebaseMessaging.subscribeToTopic("${ConstrinFCM.TOPIC}${firebaseMessaging.token.result}")
         setContent {
 

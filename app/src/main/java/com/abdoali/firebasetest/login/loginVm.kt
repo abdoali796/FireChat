@@ -35,7 +35,9 @@ class LoginVm @Inject constructor(
     fun singIn(email: String , password: String): Flow<LoginSata> = flow()
     {
         emit(LoginSata.Loading)
+
         emit(login.singIn(email , password))
+
 
     }
 

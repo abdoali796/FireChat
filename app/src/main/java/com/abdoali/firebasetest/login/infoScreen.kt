@@ -2,7 +2,6 @@ package com.abdoali.firebasetest
 
 import android.annotation.SuppressLint
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,7 +12,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.outlined.AddAPhoto
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,7 +36,6 @@ import coil.compose.AsyncImage
 import com.abdoali.firebasetest.dataLayer.LoginSata
 import com.abdoali.firebasetest.dataLayer.User
 import com.abdoali.firebasetest.login.LoginVm
-import com.abdoali.firebasetest.login.TAGVM
 import com.abdoali.firebasetest.mainScreen.popupToMain
 import com.abdoali.firebasetest.temp.LoadingAnimationDialog
 import kotlinx.coroutines.launch
@@ -91,7 +89,7 @@ fun Info(
             if (user == User()) {
                 isLoading = true
             } else {
-Log.i(TAGVM,"kkkklllllllllllllllllllll"+user?.email.toString())
+
                 isLoading = false
                 uri = user?.picture?.toUri()
                 userName = user?.userName.toString()
@@ -176,8 +174,8 @@ Log.i(TAGVM,"kkkklllllllllllllllllllll"+user?.email.toString())
                                     }
                                 }
                             }
-                        } , Modifier.size(24.dp)) {
-                            Icon(Icons.Default.Image , contentDescription = null)
+                        } ) {
+                            Icon(Icons.Outlined.AddAPhoto , contentDescription = null , Modifier.size(30.dp))
                         }
                     }
                     Column(

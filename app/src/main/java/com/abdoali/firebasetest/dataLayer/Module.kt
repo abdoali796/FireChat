@@ -3,6 +3,7 @@ package com.abdoali.firebasetest.dataLayer
 import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,6 +47,12 @@ object Module {
         return retrofit.create(NotificationApi::class.java)
     }
 
+
+    @Provides
+    @Singleton
+    fun fcm()= FirebaseMessaging.getInstance()
+
+
     @Provides
     @Singleton
     fun repositoryChat(
@@ -53,9 +60,10 @@ object Module {
         storage: FirebaseStorage ,
         database: FirebaseDatabase ,
         api: NotificationApi ,
+        fcm:FirebaseMessaging,
         @ApplicationContext context: Context
     ):
-            RepositoryChat = RepositoryChatImp(firebaseAuth , database , storage , api , context)
+            RepositoryChat = RepositoryChatImp(firebaseAuth , database , storage , api , fcm ,context)
 
 
 }

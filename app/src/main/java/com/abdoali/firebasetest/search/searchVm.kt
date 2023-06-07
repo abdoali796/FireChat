@@ -34,7 +34,7 @@ class SearchVm @Inject constructor(
 
     init {
         viewModelScope.launch {
-            delay(4000)
+            delay(1000)
             _list.update { repositoryChat.getList() }
         }
     }

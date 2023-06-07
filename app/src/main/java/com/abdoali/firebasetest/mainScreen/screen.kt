@@ -41,7 +41,13 @@ fun MainScreen(
 
     val ursers by vm.listStateFlow.collectAsState()
 
-
+//LaunchedEffect(key1 = true){
+//    FirebaseMessaging.getInstance().subscribeToTopic(mySharedPreferences.token.toString()).addOnCompleteListener {
+//        if (it.isSuccessful){
+//
+//        }
+//    }
+//}
     MainScreenImp(ursers = ursers ,
         singOutAction = {
         vm.singOut()

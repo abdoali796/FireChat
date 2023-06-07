@@ -25,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -60,9 +61,7 @@ fun Login(
     var landing by remember {
         mutableStateOf(false)
     }
-    Scaffold(
-
-    ) { padding ->
+    Scaffold() { padding ->
 
 
         Column(
@@ -73,20 +72,21 @@ fun Login(
                 .fillMaxSize()
                 .verticalScroll(scrollableState)
                 .padding(paddingValues = padding)
-
+//                .animateContentSize()
         ) {
 
 
             Image(
-                painter = painterResource(id = R.drawable.logo) ,
+                painter = painterResource(id = R.drawable.logo1) ,
                 contentDescription = "logo" ,
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Inside
             )
 
             when (tabInt) {
                 0 -> SignIn(navController = navController) { landing = it }
                 1 -> Sign_Up(navController = navController) { landing = it }
             }
+
 
             NavigationBar(
 
@@ -96,14 +96,15 @@ fun Login(
                         onClick = { tabInt = index } ,
                         label = { Text(text = title) } ,
                         icon = { Image(painter = tabIcon[index] , contentDescription = title) } ,
-                        alwaysShowLabel = false)
+                        alwaysShowLabel = true)
                 }
             }
-            AnimatedVisibility (landing) {
-                ApplyChangeDialog(isLoading = { landing = it })
-            }
 
 
+        }
+
+        AnimatedVisibility(landing) {
+            ApplyChangeDialog(isLoading = { landing = it })
         }
     }
 
@@ -212,7 +213,7 @@ fun Sign_Up(
     }
 
 
-    if (showDig) {
+    AnimatedVisibility(showDig) {
         ErrorDialog(errorMassge = errorMassage , showDialog = { showDig = it })
     }
 
@@ -295,6 +296,7 @@ fun SignIn(
                         }
 
                         LoginSata.Succeed -> {
+
                             loading(false)
                             navController.popupToMain()
                         }
@@ -308,18 +310,12 @@ fun SignIn(
             modifier = Modifier.clickable { showDigRest = true })
     }
 
-    if (showDigRest) {
+    AnimatedVisibility(showDigRest) {
         RestPassWord(showDialog = { showDigRest = it })
     }
 
 
-
-
-
-
-
-
-    if (showDig) {
+    AnimatedVisibility(showDig) {
         ErrorDialog(errorMassage , showDialog = { showDig = it })
 
     }
@@ -345,13 +341,21 @@ fun RestPassWord(
 //    if (showDialog)
     Dialog(onDismissRequest = { showDialog(false) }) {
         Surface(
-            color = MaterialTheme.colorScheme.onPrimary , shape = MaterialTheme.shapes.small
+            color = MaterialTheme.colorScheme.onPrimary ,
+            shape = MaterialTheme.shapes.small ,
 
-        ) {
+            ) {
 
 
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = stringResource(R.string.rest_password))
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally ,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(R.string.rest_password) ,
+                    style = MaterialTheme.typography.titleLarge ,
+                    fontFamily = FontFamily.Monospace
+                )
                 Spacer(modifier = Modifier.height(10.dp))
 
                 OutlinedTextField(
@@ -363,8 +367,8 @@ fun RestPassWord(
 
                     } ,
                     isError = isErrors ,
-
-                    )
+                    modifier = Modifier.fillMaxWidth(0.8f)
+                )
                 Button(onClick = {
                     coroutineScope.launch {
                         vm.resatPass(email).collect {

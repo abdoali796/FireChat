@@ -52,6 +52,7 @@ class RepositoryChatImp @Inject constructor(
     private val database: FirebaseDatabase ,
     private val storage: FirebaseStorage ,
     private val notificationApi: NotificationApi ,
+    private val fcm: FirebaseMessaging,
     private val context: Context
 
 ) : RepositoryChat {
@@ -340,7 +341,8 @@ class RepositoryChatImp @Inject constructor(
     private suspend fun addToken(add: Boolean) {
 
         val token = if (add) mySharedPreferences.token else null
-        FirebaseMessaging.getInstance().subscribeToTopic("/topics/abdo").await()
+        Log.i(TAG_Token ,"toke"+token.toString())
+        topic(add)
         val user = getCurrentUserProfile()
         val databaseReference =
             database.reference.child(Constrain.user).child(getCurrentUser() !!.uid)
